@@ -6,7 +6,7 @@ import Parser from "./css-loader-core/parser";
 import FileSystemLoader from "./css-loader-core/loader";
 
 import generateScopedName from "./generateScopedName";
-import saveJSON from "./saveJSON";
+import exportJSON from "./getJSON";
 import { getDefaultPlugins, isValidBehaviour, behaviours } from "./behaviours";
 
 const PLUGIN_NAME = "postcss-modules";
@@ -72,7 +72,7 @@ function dashesCamelCase(string) {
 }
 
 module.exports = postcss.plugin(PLUGIN_NAME, (opts = {}) => {
-  const getJSON = opts.getJSON || saveJSON;
+  const getJSON = opts.getJSON || exportJSON;
 
   return async (css, result) => {
     const inputFile = css.source.input.file;
@@ -133,7 +133,6 @@ module.exports = postcss.plugin(PLUGIN_NAME, (opts = {}) => {
       exportTokens: parser.exportTokens,
     });
 
-    // getJSON may return a promise
     return getJSON(css.source.input.file, parser.exportTokens, result.opts.to);
   };
 });

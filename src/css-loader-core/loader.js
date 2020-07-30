@@ -1,8 +1,8 @@
 // Copied from https://github.com/css-modules/css-modules-loader-core
 
 import postcss from "postcss";
-import fs from "fs";
-import path from "path";
+// import fs from "fs";
+// import path from "path";
 
 import Parser from "./parser";
 
@@ -52,43 +52,41 @@ export default class FileSystemLoader {
     this.tokensByFile = {};
   }
 
-  fetch(_newPath, relativeTo, _trace) {
-    let newPath = _newPath.replace(/^["']|["']$/g, ""),
-      trace = _trace || String.fromCharCode(this.importNr++);
-    return new Promise((resolve, reject) => {
-      let relativeDir = path.dirname(relativeTo),
-        rootRelativePath = path.resolve(relativeDir, newPath),
-        fileRelativePath = path.resolve(
-          path.join(this.root, relativeDir),
-          newPath
-        );
-
-      // if the path is not relative or absolute, try to resolve it in node_modules
-      if (newPath[0] !== "." && newPath[0] !== "/") {
-        try {
-          fileRelativePath = require.resolve(newPath);
-        } catch (e) {
-          // noop
-        }
-      }
-
-      const tokens = this.tokensByFile[fileRelativePath];
-      if (tokens) {
-        return resolve(tokens);
-      }
-
-      fs.readFile(fileRelativePath, "utf-8", (err, source) => {
-        if (err) reject(err);
-        this.core
-          .load(source, rootRelativePath, trace, this.fetch.bind(this))
-          .then(({ injectableSource, exportTokens }) => {
-            this.sources[fileRelativePath] = injectableSource;
-            this.traces[trace] = fileRelativePath;
-            this.tokensByFile[fileRelativePath] = exportTokens;
-            resolve(exportTokens);
-          }, reject);
-      });
-    });
+  // TODO: How to in-browser fetch?
+  fetch(/*_newPath, relativeTo, _trace*/) {
+    // let newPath = _newPath.replace(/^["']|["']$/g, ""),
+    //   trace = _trace || String.fromCharCode(this.importNr++);
+    // return new Promise((resolve, reject) => {
+    //   let relativeDir = path.dirname(relativeTo),
+    //     rootRelativePath = path.resolve(relativeDir, newPath),
+    //     fileRelativePath = path.resolve(
+    //       path.join(this.root, relativeDir),
+    //       newPath
+    //     );
+    //   // if the path is not relative or absolute, try to resolve it in node_modules
+    //   if (newPath[0] !== "." && newPath[0] !== "/") {
+    //     try {
+    //       fileRelativePath = require.resolve(newPath);
+    //     } catch (e) {
+    //       // noop
+    //     }
+    //   }
+    //   const tokens = this.tokensByFile[fileRelativePath];
+    //   if (tokens) {
+    //     return resolve(tokens);
+    //   }
+    //   fs.readFile(fileRelativePath, "utf-8", (err, source) => {
+    //     if (err) reject(err);
+    //     this.core
+    //       .load(source, rootRelativePath, trace, this.fetch.bind(this))
+    //       .then(({ injectableSource, exportTokens }) => {
+    //         this.sources[fileRelativePath] = injectableSource;
+    //         this.traces[trace] = fileRelativePath;
+    //         this.tokensByFile[fileRelativePath] = exportTokens;
+    //         resolve(exportTokens);
+    //       }, reject);
+    //   });
+    // });
   }
 
   get finalSource() {

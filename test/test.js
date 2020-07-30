@@ -1,3 +1,6 @@
+// TODO: Fetch function has been removed in FileSystemLoader
+// So some test cases failed
+
 import postcss from "postcss";
 import autoprefixer from "autoprefixer";
 import fs from "fs";
@@ -16,6 +19,10 @@ const cases = {
   interpolated: "generates scoped name with interpolated string",
   global: "allows to make CSS global",
 };
+
+function saveJSON(cssFile, json) {
+  fs.writeFileSync(`${cssFile}.json`, JSON.stringify(json));
+}
 
 function generateScopedName(name, filename) {
   const file = path.basename(filename, ".css").replace(/\./g, "_");
@@ -64,7 +71,12 @@ it("saves JSON next to CSS by default", async () => {
 
   if (fs.existsSync(jsonFile)) fs.unlinkSync(jsonFile);
 
-  await postcss([plugin({ generateScopedName })]).process(source, {
+  await postcss([
+    plugin({
+      generateScopedName,
+      getJSON: saveJSON,
+    }),
+  ]).process(source, {
     from: sourceFile,
   });
 
@@ -99,7 +111,11 @@ it("processes localsConvention with camelCase option", async () => {
   if (fs.existsSync(jsonFile)) fs.unlinkSync(jsonFile);
 
   await postcss([
-    plugin({ generateScopedName, localsConvention: "camelCase" }),
+    plugin({
+      generateScopedName,
+      localsConvention: "camelCase",
+      getJSON: saveJSON,
+    }),
   ]).process(source, { from: sourceFile });
 
   const json = fs.readFileSync(jsonFile).toString();
@@ -123,7 +139,11 @@ it("processes localsConvention with camelCaseOnly option", async () => {
   if (fs.existsSync(jsonFile)) fs.unlinkSync(jsonFile);
 
   await postcss([
-    plugin({ generateScopedName, localsConvention: "camelCaseOnly" }),
+    plugin({
+      generateScopedName,
+      localsConvention: "camelCaseOnly",
+      getJSON: saveJSON,
+    }),
   ]).process(source, { from: sourceFile });
 
   const json = fs.readFileSync(jsonFile).toString();
@@ -144,7 +164,11 @@ it("processes localsConvention with dashes option", async () => {
   if (fs.existsSync(jsonFile)) fs.unlinkSync(jsonFile);
 
   await postcss([
-    plugin({ generateScopedName, localsConvention: "dashes" }),
+    plugin({
+      generateScopedName,
+      localsConvention: "dashes",
+      getJSON: saveJSON,
+    }),
   ]).process(source, { from: sourceFile });
 
   const json = fs.readFileSync(jsonFile).toString();
@@ -167,7 +191,11 @@ it("processes localsConvention with dashes option", async () => {
   if (fs.existsSync(jsonFile)) fs.unlinkSync(jsonFile);
 
   await postcss([
-    plugin({ generateScopedName, localsConvention: "dashes" }),
+    plugin({
+      generateScopedName,
+      localsConvention: "dashes",
+      getJSON: saveJSON,
+    }),
   ]).process(source, { from: sourceFile });
 
   const json = fs.readFileSync(jsonFile).toString();
@@ -180,7 +208,6 @@ it("processes localsConvention with dashes option", async () => {
   });
 });
 
-
 it("processes localsConvention with function option", async () => {
   const sourceFile = path.join(fixturesPath, "in", "camelCase.css");
   const source = fs.readFileSync(sourceFile).toString();
@@ -189,9 +216,13 @@ it("processes localsConvention with function option", async () => {
   if (fs.existsSync(jsonFile)) fs.unlinkSync(jsonFile);
 
   await postcss([
-    plugin({ generateScopedName, localsConvention: (className) => {
-      return className.replace('camel-case', 'cc');
-    } }),
+    plugin({
+      generateScopedName,
+      localsConvention: (className) => {
+        return className.replace("camel-case", "cc");
+      },
+      getJSON: saveJSON,
+    }),
   ]).process(source, { from: sourceFile });
 
   const json = fs.readFileSync(jsonFile).toString();
@@ -199,7 +230,7 @@ it("processes localsConvention with function option", async () => {
 
   expect(JSON.parse(json)).toMatchObject({
     cc: "_camelCase_camel-case",
-    'cc-extra': "_camelCase_camel-case-extra",
+    "cc-extra": "_camelCase_camel-case-extra",
     FooBar: "_camelCase_FooBar",
   });
 });

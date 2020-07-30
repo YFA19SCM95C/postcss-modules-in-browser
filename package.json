@@ -1,17 +1,19 @@
 {
-  "name": "postcss-modules",
-  "version": "3.2.0",
-  "description": "PostCSS plugin to use CSS Modules everywhere",
+  "name": "postcss-modules-in-browser",
+  "version": "0.0.1",
+  "description": "An in-browser PostCSS plugin to use CSS Modules everywhere",
   "main": "build/index.js",
   "keywords": [
     "postcss",
+    "postcss-browser",
     "css",
     "postcss-plugin",
+    "postcss-plugin-in-browser",
     "modules",
     "css modules",
     "components"
   ],
-  "author": "Alexander Madyankin <alexander@madyankin.name>",
+  "author": "Jackson Cao <caoyongqiang00@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
