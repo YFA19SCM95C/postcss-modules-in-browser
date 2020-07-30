@@ -1,6 +1,6 @@
 {
   "name": "postcss-modules-in-browser",
-  "version": "0.0.1",
+  "version": "4.0.0",
   "description": "An in-browser PostCSS plugin to use CSS Modules everywhere",
   "main": "build/index.js",
   "keywords": [
